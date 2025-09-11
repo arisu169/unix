@@ -1,0 +1,46 @@
+6.Write a program to create a child process using fork() and exec() system calls.
+
+**Create a file and name it fork_ls.c
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t pid;
+    pid = fork();
+
+    if (pid < 0) {
+        // Fork failed
+        perror("fork");
+        exit(EXIT_FAILURE);
+    } 
+    else if (pid == 0) {
+        // Child process
+        char *args[] = {"ls", "-l", NULL};
+        execvp("ls", args);
+        // Only executes if execvp fails
+        perror("execvp");
+        exit(EXIT_FAILURE);
+    } 
+    else {
+        // Parent process
+        printf("Parent process: created child with PID %d\n", pid);
+        int status;
+        wait(&status);
+
+        if (WIFEXITED(status)) {
+            printf("Parent process: child exited with status %d\n", WEXITSTATUS(status));
+        } else {
+            printf("Parent process: child did not terminate normally\n");
+        }
+    }
+
+    return 0;
+}
+
+**How to run ?
+chmod +x fork_ls.c
+gcc -o fork_ls fork_ls.c //to compile
+./fork_ls  //to execute

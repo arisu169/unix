@@ -1,0 +1,33 @@
+4.Write a shell script that accepts one or more file names as arguments and converts all of them into uppercase, provided they exist in the current directory.
+
+**Create a file and name it as rename_upper.sh
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 file1 [file2 ... fileN]"
+    exit 1
+fi
+
+for filename in "$@"
+do
+    if [ -e "$filename" ]; then
+        uppername=$(echo "$filename" | tr '[:lower:]' '[:upper:]')
+
+        if [ "$filename" != "$uppername" ]; then
+            # Rename via temp if uppercase exists (for case-insensitive FS)
+            tempname="_temp_$$"
+            mv "$filename" "$tempname"
+            mv "$tempname" "$uppername"
+            echo "Renamed '$filename' to '$uppername'"
+        else
+            echo "'$filename' is already in uppercase. Skipping."
+        fi
+    else
+        echo "File '$filename' does not exist in current directory."
+    fi
+done
+
+**How to run ?
+
+touch hello.txt world.txt notes.md     //to create other files
+chmod +x rename_upper.sh
+./rename_upper.sh file1.txt file2.txt notes.md

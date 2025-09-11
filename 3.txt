@@ -1,0 +1,48 @@
+3. Program to search for a given pattern in a file.
+
+**Create a file name it search_pattern.sh
+
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <pattern> <filename>"
+  exit 1
+fi
+
+pattern="$1"
+file="$2"
+
+# Check if the file exists and is a regular file
+if [ ! -f "$file" ]; then
+  echo "Error: File \"$file\" not found."
+  exit 2
+fi
+
+# Check if the file is empty
+if [ ! -s "$file" ]; then
+  echo "Warning: File \"$file\" is empty."
+  exit 3
+fi
+
+echo "Searching for pattern \"$pattern\" in file \"$file\"..."
+
+# Perform the grep search with line numbers and color
+grep --color=always -n "$pattern" "$file"
+
+# Count matches
+match_count=$(grep -c "$pattern" "$file")
+
+if [ "$match_count" -eq 0 ]; then
+  echo "No matches found."
+else
+  echo "Total matches found: $match_count"
+fi
+
+
+
+**Create another file and name it "myfile.txt" and write "hello world" in it.
+
+**How to Run ?
+chmod +x search_pattern.sh
+
+./search_pattern.sh hello myfile.txt

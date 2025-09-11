@@ -1,0 +1,32 @@
+2.Write a shell script that takes a command line argument and reports on whether it is a directory, a file, or something else.
+
+**Create a file and name it as "check_type.sh"
+
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <path>"
+  exit 1
+fi
+
+input="$1"
+
+# Check the type of file
+if [ -d "$input" ]; then
+  echo "\"$input\" is a directory."
+elif [ -f "$input" ]; then
+  echo "\"$input\" is a regular file."
+elif [ -e "$input" ]; then
+  echo "\"$input\" exists but is neither a regular file nor a directory (might be a device, symlink, etc.)."
+else
+  echo "\"$input\" does not exist."
+fi
+
+**How To Run ?
+chmod +x check_type.sh
+
+**Run one by one
+./check_type.sh /etc
+./check_type.sh /etc/passwd
+./check_type.sh /dev/null
+./check_type.sh /doesnotexist

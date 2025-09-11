@@ -1,0 +1,21 @@
+5.Write a shell script to delete all the temporary files.
+
+**create file and name it cleanup_temp.sh
+
+# Define the directory containing temporary files
+temp_dir="/tmp"   # For Linux
+# temp_dir="/cygdrive/c/Users/lenovo/AppData/Local/Temp"   # For Cygwin on Windows
+
+# Check if the directory exists
+if [ -d "$temp_dir" ]; then
+    # Delete all files ending with .temp
+    find "$temp_dir" -type f -name "*.temp" -delete
+    echo "All .temp files deleted successfully from $temp_dir."
+else
+    echo "Directory not found: $temp_dir"
+fi
+
+
+**How to run ?
+chmod +x cleanup_temp.sh
+./cleanup_temp.sh
