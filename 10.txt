@@ -1,0 +1,9 @@
+// 10.	Write a shell script to display list of users currently logged in.
+
+users=$(whoami | awk '{print $1}' | sort | uniq)
+if [ -z "$users" ]; then
+    echo "No users are currently logged in."
+else
+    echo "Currently logged in users are:"
+    echo "$users"
+fi
