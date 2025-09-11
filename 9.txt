@@ -1,0 +1,33 @@
+// 9.	Write a shell script to check and list attributes of a process.
+
+echo "Enter the process name or PID:"
+read pname
+
+# Detect OS type
+os_type=$(uname | tr '[:upper:]' '[:lower:]')
+
+if [[ "$os_type" == *"linux"* ]]; then
+    # -------- Linux Version --------
+    if [[ "$pname" =~ ^[0-9]+$ ]]; then
+        echo "Fetching details for PID $pname (Linux)..."
+        ps -p "$pname" -o pid,ppid,user,group,comm,etime,%cpu,%mem,stat
+    else
+        echo "Fetching details for process name: $pname (Linux)..."
+        ps -C "$pname" -o pid,ppid,user,group,comm,etime,%cpu,%mem,stat
+    fi
+
+elif [[ "$os_type" == *"cygwin"* ]]; then
+    # -------- Cygwin Version --------
+    if [[ "$pname" =~ ^[0-9]+$ ]]; then
+        echo "Fetching details for PID $pname (Cygwin)..."
+        # Match first column (PID) exactly
+        ps -W | awk -v pid="$pname" '$1 == pid {print $0}'
+    else
+        echo "Fetching details for process name: $pname (Cygwin)..."
+        ps -W | grep -i "$pname" | grep -v "grep"
+    fi
+
+else
+    echo "Unsupported OS: $os_type"
+    exit 2
+fi
