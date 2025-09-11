@@ -1,0 +1,78 @@
+// 12.	Write a C program which demonstrates inter-process communication between a reader process and a writer process.
+
+// Writer file
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <string.h>
+#define SHM_NAME "/myshm"
+#define SIZE 1024
+
+int main() {
+    int fd;
+    char *ptr;
+
+   
+    fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (fd == -1) {
+        perror("shm_open failed");
+        exit(1);
+    }
+    
+    if (ftruncate(fd, SIZE) == -1) {
+        perror("ftruncate failed");
+        exit(1);
+    }
+    
+    ptr = mmap(0, SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
+    if (ptr == MAP_FAILED) {
+        perror("mmap failed");
+        exit(1);
+    }
+    
+    char msg[] = "Hello from Writer Process!";
+    printf("Writer: writing message...\n");
+    sprintf(ptr, "%s", msg);
+
+    
+    close(fd);
+    return 0;
+}
+
+
+// Reader file
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#define SHM_NAME "/myshm"
+#define SIZE 1024
+
+int main() {
+    int fd;
+    char *ptr;
+
+   
+    fd = shm_open(SHM_NAME, O_RDONLY, 0666);
+    if (fd == -1) {
+        perror("shm_open failed");
+        exit(1);
+    }
+    
+    ptr = mmap(0, SIZE, PROT_READ, MAP_SHARED, fd, 0);
+    if (ptr == MAP_FAILED) {
+        perror("mmap failed");
+        exit(1);
+    }
+   
+    printf("Reader: read message: %s\n", ptr);
+   
+    close(fd);
+    shm_unlink(SHM_NAME); 
+    return 0;
+}
